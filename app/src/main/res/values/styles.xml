@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="logFont">
+        <item name="android:fontFamily">serif-monospace</item>
+    </style>
+</resources>

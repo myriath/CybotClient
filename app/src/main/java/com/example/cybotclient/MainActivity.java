@@ -3,6 +3,7 @@ package com.example.cybotclient;
 import static com.example.cybotclient.Constants.*;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -162,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
                     LinearLayout layout = findViewById(R.id.log);
                     TextView logData = new TextView(this);
                     logData.setText(dataHandler.getPreppedMessage());
+                    logData.setTextAppearance(R.style.logFont);
+                    logData.setSingleLine(false);
 
                     layout.addView(logData);
                     ScrollView logScrollView = findViewById(R.id.logScrollView);
