@@ -5,55 +5,28 @@ import static com.example.cybotclient.Constants.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private final DataHandler dataHandler = new DataHandler();
 
-    private final ColorStateList disconnectedColor = new ColorStateList(
-            new int[][] {
-                    new int[] {-android.R.attr.state_enabled},
-                    new int[] {android.R.attr.state_enabled}
-            },
-            new int[]{
-                    Color.BLACK,
-                    Color.rgb(147, 29, 29)
-            }
-    );
-    private final ColorStateList connectingColor = new ColorStateList(
-            new int[][] {
-                    new int[] {-android.R.attr.state_enabled},
-                    new int[] {android.R.attr.state_enabled}
-            },
-            new int[]{
-                    Color.BLACK,
-                    Color.rgb(237, 190, 20)
-            }
-    );
-    private final ColorStateList connectedColor = new ColorStateList(
-            new int[][] {
-                    new int[] {-android.R.attr.state_enabled},
-                    new int[] {android.R.attr.state_enabled}
-            },
-            new int[]{
-                    Color.BLACK,
-                    Color.rgb(19, 166, 40)
-            }
-    );
-
     private ConnectionHandler client;
+    private Thread clientThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +35,23 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_main);
 
-        client = new ConnectionHandler(CYBOT_IP, CYBOT_PORT);
+        client = new ConnectionHandler(this, CYBOT_IP_TEST, CYBOT_PORT);
+        clientThread = new Thread(client);
+        CheckBox incrementalCheck = findViewById(R.id.moveIncrement);
 
         findViewById(R.id.forward).setOnTouchListener((view, motionEvent) -> {
             view.performClick();
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                moveForward();
+                if (incrementalCheck.isChecked()) {
+                    moveForwardInc();
+                } else {
+                    moveForward();
+                }
                 return true;
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                moveStop();
+                if (!incrementalCheck.isChecked()) {
+                    moveStop();
+                }
                 return true;
             }
             return false;
@@ -79,10 +60,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.left).setOnTouchListener((view, motionEvent) -> {
             view.performClick();
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                moveLeft();
-                return true;
+                if (incrementalCheck.isChecked()) {
+                    moveLeftInc();
+                } else {
+                    moveLeft();
+                }
+                return false;
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                moveStop();
+                if (!incrementalCheck.isChecked()) {
+                    moveStop();
+                }
                 return true;
             }
             return false;
@@ -91,10 +78,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.reverse).setOnTouchListener((view, motionEvent) -> {
             view.performClick();
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                moveReverse();
+                if (incrementalCheck.isChecked()) {
+                    moveReverseInc();
+                } else {
+                    moveReverse();
+                }
                 return true;
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                moveStop();
+                if (!incrementalCheck.isChecked()) {
+                    moveStop();
+                }
                 return true;
             }
             return false;
@@ -103,10 +96,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.right).setOnTouchListener((view, motionEvent) -> {
             view.performClick();
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                moveRight();
+                if (incrementalCheck.isChecked()) {
+                    moveRightInc();
+                } else {
+                    moveRight();
+                }
                 return true;
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                moveStop();
+                if (!incrementalCheck.isChecked()) {
+                    moveStop();
+                }
                 return true;
             }
             return false;
@@ -116,17 +115,29 @@ public class MainActivity extends AppCompatActivity {
     public void moveForward() {
         client.sendByte(B_MOVE_FORWARD);
     }
+    public void moveForwardInc() {
+        client.sendByte(B_MOVE_FORWARD_INC);
+    }
 
     public void moveLeft() {
         client.sendByte(B_MOVE_LEFT);
+    }
+    public void moveLeftInc() {
+        client.sendByte(B_MOVE_LEFT_INC);
     }
 
     public void moveReverse() {
         client.sendByte(B_MOVE_REVERSE);
     }
+    public void moveReverseInc() {
+        client.sendByte(B_MOVE_REVERSE_INC);
+    }
 
     public void moveRight() {
         client.sendByte(B_MOVE_RIGHT);
+    }
+    public void moveRightInc() {
+        client.sendByte(B_MOVE_RIGHT_INC);
     }
 
     public void moveStop() {
@@ -149,33 +160,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void connect(View view) {
-        RadioButton button = findViewById(R.id.connection);
-        button.setButtonTintList(connectingColor);
-        button.setText(R.string.radio_connecting);
-
-        if (client.connect()) {
-            button.setButtonTintList(connectedColor);
-            button.setText(R.string.radio_connected);
-
-            client.setListener(data -> {
-                dataHandler.handle(data);
-                if (dataHandler.ready()) {
-                    LinearLayout layout = findViewById(R.id.log);
-                    TextView logData = new TextView(this);
-                    logData.setText(dataHandler.getPreppedMessage());
-                    logData.setTextAppearance(R.style.logFont);
-                    logData.setSingleLine(false);
-
-                    layout.addView(logData);
-                    ScrollView logScrollView = findViewById(R.id.logScrollView);
-                    logScrollView.post(() -> {
-                        logScrollView.fullScroll(View.FOCUS_DOWN);
-                    });
-                }
-            });
+        if (client.isConnected()) {
+            try {
+                client.disconnect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
-            button.setButtonTintList(disconnectedColor);
-            button.setText(R.string.error_msg);
+            clientThread = new Thread(client);
+            clientThread.start();
         }
+    }
+
+    public void clearLog(View view) {
+        LinearLayout layout = findViewById(R.id.log);
+
+        layout.removeAllViews();
+        ScrollView logScrollView = findViewById(R.id.logScrollView);
+        logScrollView.post(() -> logScrollView.fullScroll(View.FOCUS_DOWN));
     }
 }

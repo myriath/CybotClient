@@ -29,20 +29,25 @@ public class DataHandler {
                 } else {
                     currentMsgQueue.add(data);
                 }
+                break;
             }
             case B_NEWLINE: {
                 if (currentState == State.READING_MESSAGE) {
                     buildMessage();
                 }
+                break;
             }
             case B_END_MESSAGE: {
                 if (currentState == State.READING_MESSAGE) {
                     currentState = State.WAITING;
                     buildMessage();
                 }
+                break;
             }
             default: {
-                currentMsgQueue.add(data);
+                if (currentState == State.READING_MESSAGE) {
+                    currentMsgQueue.add(data);
+                }
             }
         }
     }
@@ -57,7 +62,9 @@ public class DataHandler {
     }
 
     public boolean ready() {
-        return messageReady;
+        boolean ret = messageReady;
+        messageReady = false;
+        return ret;
     }
 
     public String getPreppedMessage() {

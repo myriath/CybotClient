@@ -9,4 +9,9 @@
     <string name="left">Left</string>
     <string name="forward">Forward</string>
     <string name="radio_make_connection">Click to Connect</string>
+    <string name="command">Command</string>
+    <string name="send">Send</string>
+    <string name="incremental">Incremental</string>
+    <string name="clear_log">Clear Log</string>
+    <string name="disconnected">Disconnected</string>
 </resources>
