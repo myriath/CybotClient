@@ -1,13 +1,8 @@
 package com.example.cybotclient;
 
-import static com.example.cybotclient.Constants.DISCONNECTED_COLOR;
-
 import android.app.Activity;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -15,12 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class InThread extends Thread {
-    private Activity activity;
-    private InputStream is;
+    private final Activity activity;
+    private final InputStream is;
 
     private boolean connected;
 
-    private DataHandler handler;
+    private final DataHandler handler;
 
     public InThread(Activity activity, InputStream is) {
         this.activity = activity;
@@ -58,6 +53,7 @@ public class InThread extends Thread {
                         }
                     });
                 }
+                //noinspection BusyWait
                 Thread.sleep(10);
             }
 

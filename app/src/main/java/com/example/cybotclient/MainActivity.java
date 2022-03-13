@@ -18,8 +18,6 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private SocketHandler client;
-    //    private ConnectionHandler client;
-//    private Thread clientThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         client = new SocketHandler(this, CYBOT_IP_TEST, CYBOT_PORT);
-//        client = new ConnectionHandler(this, CYBOT_IP_TEST, CYBOT_PORT);
-//        clientThread = new Thread(client);
         CheckBox incrementalCheck = findViewById(R.id.moveIncrement);
 
         findViewById(R.id.forward).setOnTouchListener((view, motionEvent) -> {
@@ -154,16 +150,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void connect(View view) {
-//        if (client.isConnected()) {
-//            try {
-//                client.disconnect();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            clientThread = new Thread(client);
-//            clientThread.start();
-//        }
         if (client.isConnected()) {
             client.disconnect();
         } else {

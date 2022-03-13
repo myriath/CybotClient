@@ -60,7 +60,7 @@ public class SocketHandler implements Runnable {
             Socket socket = new Socket(ip, port);
 
             in = new InThread(activity, socket.getInputStream());
-            out = new OutThread(activity, socket.getOutputStream());
+            out = new OutThread(socket.getOutputStream());
             in.start();
             out.start();
 
@@ -72,7 +72,8 @@ public class SocketHandler implements Runnable {
 
             while (isConnected()) {
                 try {
-                    Thread.sleep(100);
+                    //noinspection BusyWait
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -86,7 +87,11 @@ public class SocketHandler implements Runnable {
                 connectionStatus.setText(R.string.disconnected);
             });
         } catch (IOException e) {
-
+            activity.runOnUiThread(() -> {
+                RadioButton connectionStatus = activity.findViewById(R.id.connection);
+                connectionStatus.setButtonTintList(DISCONNECTED_COLOR);
+                connectionStatus.setText(R.string.error_msg);
+            });
         }
     }
 }
