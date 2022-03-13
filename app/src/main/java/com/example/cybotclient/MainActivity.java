@@ -3,11 +3,7 @@ package com.example.cybotclient;
 import static com.example.cybotclient.Constants.*;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
-import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,16 +13,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    private final DataHandler dataHandler = new DataHandler();
-
-    private ConnectionHandler client;
-    private Thread clientThread;
+    private SocketHandler client;
+    //    private ConnectionHandler client;
+//    private Thread clientThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +28,9 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_main);
 
-        client = new ConnectionHandler(this, CYBOT_IP_TEST, CYBOT_PORT);
-        clientThread = new Thread(client);
+        client = new SocketHandler(this, CYBOT_IP_TEST, CYBOT_PORT);
+//        client = new ConnectionHandler(this, CYBOT_IP_TEST, CYBOT_PORT);
+//        clientThread = new Thread(client);
         CheckBox incrementalCheck = findViewById(R.id.moveIncrement);
 
         findViewById(R.id.forward).setOnTouchListener((view, motionEvent) -> {
@@ -160,15 +154,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void connect(View view) {
+//        if (client.isConnected()) {
+//            try {
+//                client.disconnect();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            clientThread = new Thread(client);
+//            clientThread.start();
+//        }
         if (client.isConnected()) {
-            try {
-                client.disconnect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            client.disconnect();
         } else {
-            clientThread = new Thread(client);
-            clientThread.start();
+            RadioButton connectionStatus = findViewById(R.id.connection);
+            connectionStatus.setButtonTintList(CONNECTING_COLOR);
+            connectionStatus.setText(R.string.radio_connecting);
+
+            new Thread(client).start();
         }
     }
 

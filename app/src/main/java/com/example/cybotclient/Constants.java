@@ -1,6 +1,40 @@
 package com.example.cybotclient;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+
 public class Constants {
+    public static final ColorStateList DISCONNECTED_COLOR = new ColorStateList(
+            new int[][] {
+                    new int[] {-android.R.attr.state_enabled},
+                    new int[] {android.R.attr.state_enabled}
+            },
+            new int[]{
+                    Color.BLACK,
+                    Color.rgb(147, 29, 29)
+            }
+    );
+    public static final ColorStateList CONNECTING_COLOR = new ColorStateList(
+            new int[][] {
+                    new int[] {-android.R.attr.state_enabled},
+                    new int[] {android.R.attr.state_enabled}
+            },
+            new int[]{
+                    Color.BLACK,
+                    Color.rgb(237, 190, 20)
+            }
+    );
+    public static final ColorStateList CONNECTED_COLOR = new ColorStateList(
+            new int[][] {
+                    new int[] {-android.R.attr.state_enabled},
+                    new int[] {android.R.attr.state_enabled}
+            },
+            new int[]{
+                    Color.BLACK,
+                    Color.rgb(19, 166, 40)
+            }
+    );
+
     public static final byte B_SCAN = (byte) 0x01;
     public static final byte B_MOVE_STOP = (byte) 0x10;
     public static final byte B_MOVE_FORWARD = (byte) 0x11;
