@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         client = new SocketHandler(this, CYBOT_IP_TEST, CYBOT_PORT);
-        boolean incremental = ((CheckBox) findViewById(R.id.moveIncrement)).isChecked();
+        CheckBox incremental = findViewById(R.id.moveIncrement);
 
         findViewById(R.id.forward).setOnTouchListener(getOnTouchListener(incremental, B_MOVE_FORWARD_INC, B_MOVE_FORWARD));
 
@@ -40,18 +40,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @NonNull
-    private View.OnTouchListener getOnTouchListener(boolean incremental, byte incrementalMove, byte nonIncrementalMove) {
+    private View.OnTouchListener getOnTouchListener(CheckBox incremental, byte incrementalMove, byte nonIncrementalMove) {
         return (view, motionEvent) -> {
             view.performClick();
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                if (incremental) {
+                if (incremental.isChecked()) {
                     client.sendByte(incrementalMove);
                 } else {
                     client.sendByte(nonIncrementalMove);
                 }
                 return true;
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                if (!incremental) {
+                if (!incremental.isChecked()) {
                     client.sendByte(B_MOVE_STOP);
                 }
                 return true;
