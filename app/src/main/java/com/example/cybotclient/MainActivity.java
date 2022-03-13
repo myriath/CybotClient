@@ -151,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void connect(View view) {
         if (client.isConnected()) {
+            RadioButton connectionStatus = findViewById(R.id.connection);
+            connectionStatus.setButtonTintList(CONNECTING_COLOR);
+            connectionStatus.setText(R.string.radio_disconnecting);
+
             client.disconnect();
         } else {
             RadioButton connectionStatus = findViewById(R.id.connection);

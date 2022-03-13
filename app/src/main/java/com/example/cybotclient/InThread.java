@@ -39,6 +39,7 @@ public class InThread extends Thread {
             while (connected) {
                 if (is.available() > 0) {
                     byte data = (byte) is.read();
+                    if (data == -1) break;
                     activity.runOnUiThread(() -> {
                         handler.handle(data);
                         if (handler.ready()) {

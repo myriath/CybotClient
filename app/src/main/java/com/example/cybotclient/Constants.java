@@ -47,9 +47,7 @@ public class Constants {
     public static final byte B_MOVE_RIGHT_INC = (byte) 0x18;
     public static final byte B_START_MESSAGE = (byte) 0x7f;
     public static final byte B_END_MESSAGE = (byte) 0x7e;
-    public static final byte B_NEWLINE = (byte) '\n';
-
-    public static final byte B_END_COMMS = (byte) 0x0f;
+    public static final byte B_NEWLINE = (byte) ('\n' & 0xff);
 
     public static final String CYBOT_IP = "192.168.1.1";
     public static final String CYBOT_IP_TEST = "192.168.0.157";
