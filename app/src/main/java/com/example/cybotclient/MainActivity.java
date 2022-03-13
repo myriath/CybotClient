@@ -2,6 +2,7 @@ package com.example.cybotclient;
 
 import static com.example.cybotclient.Constants.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -27,111 +28,36 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         client = new SocketHandler(this, CYBOT_IP_TEST, CYBOT_PORT);
-        CheckBox incrementalCheck = findViewById(R.id.moveIncrement);
+        boolean incremental = ((CheckBox) findViewById(R.id.moveIncrement)).isChecked();
 
-        findViewById(R.id.forward).setOnTouchListener((view, motionEvent) -> {
+        findViewById(R.id.forward).setOnTouchListener(getOnTouchListener(incremental, B_MOVE_FORWARD_INC, B_MOVE_FORWARD));
+
+        findViewById(R.id.left).setOnTouchListener(getOnTouchListener(incremental, B_MOVE_LEFT_INC, B_MOVE_LEFT));
+
+        findViewById(R.id.reverse).setOnTouchListener(getOnTouchListener(incremental, B_MOVE_REVERSE_INC, B_MOVE_REVERSE));
+
+        findViewById(R.id.right).setOnTouchListener(getOnTouchListener(incremental, B_MOVE_RIGHT_INC, B_MOVE_RIGHT));
+    }
+
+    @NonNull
+    private View.OnTouchListener getOnTouchListener(boolean incremental, byte incrementalMove, byte nonIncrementalMove) {
+        return (view, motionEvent) -> {
             view.performClick();
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                if (incrementalCheck.isChecked()) {
-                    moveForwardInc();
+                if (incremental) {
+                    client.sendByte(incrementalMove);
                 } else {
-                    moveForward();
+                    client.sendByte(nonIncrementalMove);
                 }
                 return true;
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                if (!incrementalCheck.isChecked()) {
-                    moveStop();
+                if (!incremental) {
+                    client.sendByte(B_MOVE_STOP);
                 }
                 return true;
             }
             return false;
-        });
-
-        findViewById(R.id.left).setOnTouchListener((view, motionEvent) -> {
-            view.performClick();
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                if (incrementalCheck.isChecked()) {
-                    moveLeftInc();
-                } else {
-                    moveLeft();
-                }
-                return false;
-            } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                if (!incrementalCheck.isChecked()) {
-                    moveStop();
-                }
-                return true;
-            }
-            return false;
-        });
-
-        findViewById(R.id.reverse).setOnTouchListener((view, motionEvent) -> {
-            view.performClick();
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                if (incrementalCheck.isChecked()) {
-                    moveReverseInc();
-                } else {
-                    moveReverse();
-                }
-                return true;
-            } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                if (!incrementalCheck.isChecked()) {
-                    moveStop();
-                }
-                return true;
-            }
-            return false;
-        });
-
-        findViewById(R.id.right).setOnTouchListener((view, motionEvent) -> {
-            view.performClick();
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                if (incrementalCheck.isChecked()) {
-                    moveRightInc();
-                } else {
-                    moveRight();
-                }
-                return true;
-            } else if (motionEvent.getAction() == MotionEvent.ACTION_UP || motionEvent.getAction() == MotionEvent.ACTION_CANCEL) {
-                if (!incrementalCheck.isChecked()) {
-                    moveStop();
-                }
-                return true;
-            }
-            return false;
-        });
-    }
-
-    public void moveForward() {
-        client.sendByte(B_MOVE_FORWARD);
-    }
-    public void moveForwardInc() {
-        client.sendByte(B_MOVE_FORWARD_INC);
-    }
-
-    public void moveLeft() {
-        client.sendByte(B_MOVE_LEFT);
-    }
-    public void moveLeftInc() {
-        client.sendByte(B_MOVE_LEFT_INC);
-    }
-
-    public void moveReverse() {
-        client.sendByte(B_MOVE_REVERSE);
-    }
-    public void moveReverseInc() {
-        client.sendByte(B_MOVE_REVERSE_INC);
-    }
-
-    public void moveRight() {
-        client.sendByte(B_MOVE_RIGHT);
-    }
-    public void moveRightInc() {
-        client.sendByte(B_MOVE_RIGHT_INC);
-    }
-
-    public void moveStop() {
-        client.sendByte(B_MOVE_STOP);
+        };
     }
 
     public void scan(View view) {
