@@ -1,4 +1,4 @@
-package com.example.cybotclient;
+package com.example.cybotclient.util;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -36,6 +36,12 @@ public class Constants {
     );
 
     public static final byte B_SCAN = (byte) 0x01;
+    public static final byte B_START_MESSAGE = (byte) 0x02;
+    public static final byte B_END_MESSAGE = (byte) 0x03;
+    public static final byte B_SEND_INT = (byte) 0x04;
+    public static final byte B_SEND_FLOAT = (byte) 0x05;
+    public static final byte B_SEND_DOUBLE = (byte) 0x06;
+    public static final byte B_NEWLINE = (byte) 0x0a;
     public static final byte B_MOVE_STOP = (byte) 0x10;
     public static final byte B_MOVE_FORWARD = (byte) 0x11;
     public static final byte B_MOVE_FORWARD_INC = (byte) 0x15;
@@ -45,9 +51,6 @@ public class Constants {
     public static final byte B_MOVE_REVERSE_INC = (byte) 0x17;
     public static final byte B_MOVE_RIGHT = (byte) 0x14;
     public static final byte B_MOVE_RIGHT_INC = (byte) 0x18;
-    public static final byte B_START_MESSAGE = (byte) 0x7f;
-    public static final byte B_END_MESSAGE = (byte) 0x7e;
-    public static final byte B_NEWLINE = (byte) ('\n' & 0xff);
 
     public static final String CYBOT_IP = "192.168.1.1";
     public static final String CYBOT_IP_TEST = "192.168.0.157";

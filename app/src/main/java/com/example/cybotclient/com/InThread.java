@@ -1,10 +1,12 @@
-package com.example.cybotclient;
+package com.example.cybotclient.com;
 
 import android.app.Activity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.example.cybotclient.R;
 
 import java.io.IOException;
 import java.io.InputStream;

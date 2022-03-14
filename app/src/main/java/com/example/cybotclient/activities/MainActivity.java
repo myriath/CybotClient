@@ -1,6 +1,6 @@
-package com.example.cybotclient;
+package com.example.cybotclient.activities;
 
-import static com.example.cybotclient.Constants.*;
+import static com.example.cybotclient.util.Constants.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +14,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
+
+import com.example.cybotclient.R;
+import com.example.cybotclient.com.SocketHandler;
 
 import java.util.Objects;
 
