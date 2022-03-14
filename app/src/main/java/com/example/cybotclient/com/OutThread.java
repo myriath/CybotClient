@@ -1,4 +1,4 @@
-package com.example.cybotclient;
+package com.example.cybotclient.com;
 
 import java.io.IOException;
 import java.io.OutputStream;

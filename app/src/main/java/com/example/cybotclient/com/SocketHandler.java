@@ -1,10 +1,12 @@
-package com.example.cybotclient;
+package com.example.cybotclient.com;
 
-import static com.example.cybotclient.Constants.CONNECTED_COLOR;
-import static com.example.cybotclient.Constants.DISCONNECTED_COLOR;
+import static com.example.cybotclient.util.Constants.CONNECTED_COLOR;
+import static com.example.cybotclient.util.Constants.DISCONNECTED_COLOR;
 
 import android.app.Activity;
 import android.widget.RadioButton;
+
+import com.example.cybotclient.R;
 
 import java.io.IOException;
 import java.net.Socket;

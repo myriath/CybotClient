@@ -1,6 +1,6 @@
-package com.example.cybotclient;
+package com.example.cybotclient.com;
 
-import static com.example.cybotclient.Constants.*;
+import static com.example.cybotclient.util.Constants.*;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -12,7 +12,7 @@ public class DataHandler {
     private State currentState;
     private boolean messageReady;
 
-    private Queue<Byte> currentMsgQueue;
+    private final Queue<Byte> currentMsgQueue;
     private String preppedMessage;
 
     public DataHandler() {
