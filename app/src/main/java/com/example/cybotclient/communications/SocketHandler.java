@@ -1,5 +1,6 @@
-package com.example.cybotclient.com;
+package com.example.cybotclient.communications;
 
+import static com.example.cybotclient.util.Constants.B_NEWLINE;
 import static com.example.cybotclient.util.Constants.CONNECTED_COLOR;
 import static com.example.cybotclient.util.Constants.DISCONNECTED_COLOR;
 
@@ -7,20 +8,27 @@ import android.app.Activity;
 import android.widget.RadioButton;
 
 import com.example.cybotclient.R;
+import com.example.cybotclient.activities.MainActivity;
+import com.example.cybotclient.data.DataHandler;
+import com.example.cybotclient.data.field.Field;
+import com.example.cybotclient.fragments.BotFragment;
+import com.example.cybotclient.fragments.FieldFragment;
 
 import java.io.IOException;
 import java.net.Socket;
 
 public class SocketHandler implements Runnable {
-    private final Activity activity;
+    private final MainActivity activity;
+    private final MainActivity.PagerAdapter adapter;
     private final String ip;
     private final int port;
 
     private InThread in;
     private OutThread out;
 
-    public SocketHandler(Activity activity, String ip, int port) {
+    public SocketHandler(MainActivity activity, MainActivity.PagerAdapter adapter, String ip, int port) {
         this.activity = activity;
+        this.adapter = adapter;
         this.ip = ip;
         this.port = port;
     }
@@ -46,14 +54,33 @@ public class SocketHandler implements Runnable {
         return false;
     }
 
-    public void sendByte(byte b) {
-        out.sendByte(b);
+    public void emergencyStop() {
+        out.emergencyStop();
     }
 
-    public void sendBytes(byte[] bytes) {
-        for (byte b : bytes) {
-            sendByte(b);
+    public boolean sendByte(byte b) {
+        if (isConnected()) {
+            out.sendByte(b);
+            return true;
         }
+        return false;
+    }
+
+    public boolean sendBytes(byte[] bytes) {
+        for (byte b : bytes) {
+            if (!sendByte(b)) return false;
+        }
+        return true;
+    }
+
+    public boolean sendCommand(String command) {
+        if (!sendByte((byte) ':')) return false;
+        if (!sendBytes(command.getBytes())) return false;
+        return sendByte(B_NEWLINE);
+    }
+
+    public boolean outBusy() {
+        return out.isBusy();
     }
 
     @Override
@@ -61,10 +88,10 @@ public class SocketHandler implements Runnable {
         try {
             Socket socket = new Socket(ip, port);
 
-            in = new InThread(activity, socket.getInputStream());
             out = new OutThread(socket.getOutputStream());
-            in.start();
+            in = new InThread(activity, new DataHandler(activity, MainActivity.field, adapter), socket.getInputStream(), out);
             out.start();
+            in.start();
 
             activity.runOnUiThread(() -> {
                 RadioButton connectionStatus = activity.findViewById(R.id.connection);
